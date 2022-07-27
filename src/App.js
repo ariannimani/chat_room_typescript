@@ -1,23 +1,26 @@
-import logo from './logo.svg';
-import './App.css';
+import "./App.css";
+import Chat from "./routes/Chat/Chat";
+import Sidebar from "./components/Sidebar/Sidebar";
+import { Routes, Route } from "react-router-dom";
+import React, { useContext } from "react";
+import { StateContext } from "./context/StateProvider";
+import Login from "./routes/Login/Login";
 
 function App() {
+  const { userState } = useContext(StateContext);
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      {userState.users.usersData.length === 0 ? (
+        <Login />
+      ) : (
+        <div className="app__body">
+          <Sidebar />
+          <Routes>
+            <Route path="/" index element={""} />
+            <Route path="/rooms/:roomId" element={<Chat />} />
+          </Routes>
+        </div>
+      )}
     </div>
   );
 }
