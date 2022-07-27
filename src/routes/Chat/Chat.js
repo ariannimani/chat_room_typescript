@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import "./Chat.css";
-import { Avatar, IconButton } from "@mui/material";
+import { Avatar, IconButton, Menu, MenuItem } from "@mui/material";
 import {
   AttachFile,
   InsertEmoticon,
@@ -8,9 +8,13 @@ import {
   MoreVert,
   SearchOutlined,
 } from "@mui/icons-material";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { StateContext } from "../../context/StateProvider";
-import { ADD_MESSAGE } from "../../context/actions/actions";
+import {
+  ADD_MESSAGE,
+  DELETE_ROOM,
+  DELETE_ROOM_MESSAGE,
+} from "../../context/actions/actions";
 //import db from "./firebase";
 //import firebase from "firebase";
 
@@ -18,8 +22,16 @@ function Chat() {
   const [input, setInput] = useState("");
   const [seed, setSeed] = useState("");
   const { roomId } = useParams();
-  const { messagesState, userState, messagesDispatch, roomsState } =
-    useContext(StateContext);
+  const {
+    messagesState,
+    userState,
+    messagesDispatch,
+    roomsState,
+    roomsDispatch,
+  } = useContext(StateContext);
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const open = Boolean(anchorEl);
+  const navigate = useNavigate();
 
   const weekday = [
     "Sunday",
@@ -38,7 +50,6 @@ function Chat() {
   const ScrollToBottom = () => {
     let scroll_to_bottom = document.getElementById("scroll-to-bottom");
     scroll_to_bottom.scrollTop = scroll_to_bottom.scrollHeight;
-    console.log(scroll_to_bottom.scrollHeight);
   };
   const sendMessage = (e) => {
     e.preventDefault();
@@ -117,6 +128,27 @@ function Chat() {
     }
   };
 
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const deleteRoom = () => {
+    handleClose();
+    roomsDispatch({
+      type: DELETE_ROOM,
+      playload: { roomId: Number(roomId) },
+    });
+
+    messagesDispatch({
+      type: DELETE_ROOM_MESSAGE,
+      playload: { roomId: Number(roomId) },
+    });
+    navigate("/");
+  };
+
   return (
     <div className="chat">
       <div className="chat__header">
@@ -132,9 +164,27 @@ function Chat() {
           <IconButton>
             <AttachFile />
           </IconButton>
-          <IconButton>
+          <IconButton onClick={handleClick}>
             <MoreVert />
           </IconButton>
+          <Menu
+            id="long-menu"
+            MenuListProps={{
+              "aria-labelledby": "long-button",
+            }}
+            anchorEl={anchorEl}
+            open={open}
+            onClose={handleClose}
+            PaperProps={{
+              style: {
+                width: "auto",
+              },
+            }}
+          >
+            <MenuItem key="delete" onClick={deleteRoom}>
+              Delete Room
+            </MenuItem>
+          </Menu>
         </div>
       </div>
       <div className="chat__body" id="scroll-to-bottom">

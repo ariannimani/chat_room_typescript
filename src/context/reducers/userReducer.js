@@ -1,4 +1,4 @@
-import { ADD_USER } from "../actions/actions";
+import { ADD_USER, LOGOUT_USER } from "../actions/actions";
 
 const userReducer = (state, action) => {
   switch (action.type) {
@@ -18,6 +18,15 @@ const userReducer = (state, action) => {
                   : 1,
             },
           ],
+        },
+      };
+    }
+    case LOGOUT_USER: {
+      return {
+        ...state,
+        users: {
+          ...state.users,
+          usersData: [],
         },
       };
     }

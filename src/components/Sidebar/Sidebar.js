@@ -4,16 +4,21 @@ import {
   MoreVert,
   SearchOutlined,
 } from "@mui/icons-material";
-import { Avatar, IconButton } from "@mui/material";
+import { Avatar, IconButton, Menu, MenuItem } from "@mui/material";
 import React, { useContext, useState } from "react";
 import "./Sidebar.css";
 import SidebarChat from "../SidebarChat/SidebarChat";
 import { StateContext } from "../../context/StateProvider";
+import { useNavigate } from "react-router-dom";
+import { LOGOUT_USER } from "../../context/actions/actions";
 
 function Sidebar() {
   const [search, setSearch] = useState("");
 
-  const { roomsState } = useContext(StateContext);
+  const { roomsState, userDispatch } = useContext(StateContext);
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const open = Boolean(anchorEl);
+  const navigate = useNavigate();
 
   const SearchRoom = () => {
     const DataRooms = roomsState.rooms.roomsData.filter((room) =>
@@ -22,9 +27,24 @@ function Sidebar() {
 
     return DataRooms;
   };
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+
+  const LogOut = () => {
+    userDispatch({
+      type: LOGOUT_USER,
+      playload: "",
+    });
+    handleClose();
+    navigate("/");
+  };
+
   return (
     <div className="sidebar">
-      {console.log(SearchRoom())}
       <div className="sidebar__header">
         {
           <Avatar
@@ -40,9 +60,27 @@ function Sidebar() {
           <IconButton>
             <Chat />
           </IconButton>
-          <IconButton>
+          <IconButton onClick={handleClick}>
             <MoreVert />
           </IconButton>
+          <Menu
+            id="long-menu"
+            MenuListProps={{
+              "aria-labelledby": "long-button",
+            }}
+            anchorEl={anchorEl}
+            open={open}
+            onClose={handleClose}
+            PaperProps={{
+              style: {
+                width: "auto",
+              },
+            }}
+          >
+            <MenuItem key="delete" onClick={LogOut}>
+              Log Out
+            </MenuItem>
+          </Menu>
         </div>
       </div>
       <div className="sidebar__search">

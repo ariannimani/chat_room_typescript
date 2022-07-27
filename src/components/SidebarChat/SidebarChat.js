@@ -28,7 +28,7 @@ function SidebarChat({ id, name, addNewChat }) {
     }
     roomsDispatch({
       type: ADD_ROOM,
-      playload: addRoomName,
+      playload: { roomName: addRoomName, roomOwner: 1 },
     });
   };
 

@@ -1,4 +1,4 @@
-import { ADD_MESSAGE } from "../actions/actions";
+import { ADD_MESSAGE, DELETE_ROOM_MESSAGE } from "../actions/actions";
 
 const messageReducer = (state, action) => {
   switch (action.type) {
@@ -20,7 +20,19 @@ const messageReducer = (state, action) => {
         },
       };
     }
-
+    case DELETE_ROOM_MESSAGE: {
+      return {
+        ...state,
+        messages: {
+          ...state.messages,
+          messagesData: [
+            ...state.messages.messagesData.filter(
+              (message) => message.messageChatId !== action.playload.roomId
+            ),
+          ],
+        },
+      };
+    }
     default:
       return state;
   }

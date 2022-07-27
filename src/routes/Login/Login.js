@@ -50,7 +50,6 @@ function Login() {
             variant="standard"
             onChange={(e) => setUserName(e.target.value)}
           />
-          {console.log(userName, password)}
           <TextField
             value={password}
             id="standard-basic"
