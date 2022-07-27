@@ -5,17 +5,26 @@ import {
   SearchOutlined,
 } from "@mui/icons-material";
 import { Avatar, IconButton } from "@mui/material";
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import "./Sidebar.css";
 import SidebarChat from "../SidebarChat/SidebarChat";
-//import db from "./firebase";
 import { StateContext } from "../../context/StateProvider";
 
 function Sidebar() {
+  const [search, setSearch] = useState("");
+
   const { roomsState } = useContext(StateContext);
 
+  const SearchRoom = () => {
+    const DataRooms = roomsState.rooms.roomsData.filter((room) =>
+      room.roomName.toLowerCase().includes(search.toLowerCase()) ? room : ""
+    );
+
+    return DataRooms;
+  };
   return (
     <div className="sidebar">
+      {console.log(SearchRoom())}
       <div className="sidebar__header">
         {
           <Avatar
@@ -39,13 +48,18 @@ function Sidebar() {
       <div className="sidebar__search">
         <div className="sidebar__searchContainer">
           <SearchOutlined />
-          <input placeholder="Search or start new chat" type="text"></input>
+          <input
+            placeholder="Search or start new chat"
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          ></input>
         </div>
       </div>
       <div className="sidebar__chats">
         <SidebarChat addNewChat />
-        {roomsState.rooms.roomsData.length > 0
-          ? roomsState.rooms.roomsData.map((room) => (
+        {SearchRoom().length > 0
+          ? SearchRoom().map((room) => (
               <SidebarChat
                 key={room.roomId}
                 id={room.roomId}
