@@ -38,6 +38,7 @@ function Chat() {
   const [searchMessage, setSearchMessage] = useState("");
   const [searchShow, setSearchShow] = useState(false);
   const [contextMenu, setContextMenu] = useState(null);
+  const [deleteId, setDeleteId] = useState({ id: "", userId: "" });
 
   const weekday = [
     "Sunday",
@@ -198,11 +199,21 @@ function Chat() {
   };
 
   const deleteMessageHandler = (e) => {
-    messagesDispatch({
-      type: DELETE_MESSAGE,
-      playload: { messageId: Number(e.target.value) },
-    });
+    if (
+      Number(userState.users.usersData.map((user) => user.userId)) ===
+      deleteId.userId
+    ) {
+      messagesDispatch({
+        type: DELETE_MESSAGE,
+        playload: { messageId: Number(deleteId.id) },
+      });
+    }
     handleCloseContextMenu();
+  };
+
+  const handleContextMenuClick = (e, id, userId) => {
+    handleContextMenu(e);
+    setDeleteId({ id: id, userId: userId });
   };
 
   return (
@@ -258,7 +269,14 @@ function Chat() {
       <div className="chat__body" id="scroll-to-bottom">
         {SearchMessages().map((message) => (
           <div
-            onContextMenu={handleContextMenu}
+            onContextMenu={(e) =>
+              handleContextMenuClick(
+                e,
+                message.messageId,
+                message.messageUserId
+              )
+            }
+            //onClick={() => setDeleteId(message.messageId)}
             style={{ cursor: "context-menu" }}
             key={message.messageId}
           >
@@ -267,8 +285,8 @@ function Chat() {
                 message.messageUserId ===
                   Number(
                     userState.users.usersData.map((user) => user.userId)
-                  ) && (!message.deleted ? "chat__reciever" : `chat__deleted`)
-              }`}
+                  ) && "chat__reciever"
+              } ${message.deleted === true && "chat__deleted"}`}
             >
               <span className="chat__name">{message.messageUserName}</span>
               <span className="chat__box">
