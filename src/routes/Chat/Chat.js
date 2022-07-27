@@ -15,8 +15,7 @@ import {
   DELETE_ROOM,
   DELETE_ROOM_MESSAGE,
 } from "../../context/actions/actions";
-//import db from "./firebase";
-//import firebase from "firebase";
+import Picker from "emoji-picker-react";
 
 function Chat() {
   const [input, setInput] = useState("");
@@ -32,6 +31,8 @@ function Chat() {
   const [anchorEl, setAnchorEl] = React.useState(null);
   const open = Boolean(anchorEl);
   const navigate = useNavigate();
+  const [chosenEmoji, setChosenEmoji] = useState(null);
+  const [emojiOpen, setEmojiOpen] = useState(false);
 
   const weekday = [
     "Sunday",
@@ -149,6 +150,16 @@ function Chat() {
     navigate("/");
   };
 
+  const OpenEmoji = () => {
+    setEmojiOpen(!emojiOpen);
+  };
+
+  const onEmojiClick = (event, emojiObject) => {
+    setChosenEmoji(emojiObject);
+    setInput(input + chosenEmoji.emoji);
+    setChosenEmoji(null);
+  };
+
   return (
     <div className="chat">
       <div className="chat__header">
@@ -210,8 +221,18 @@ function Chat() {
             </p>
           ))}
       </div>
+      <div>
+        {emojiOpen ? (
+          <Picker style={{ width: "100px" }} onEmojiClick={onEmojiClick} />
+        ) : (
+          ""
+        )}
+      </div>
       <div className="chat__footer">
-        <InsertEmoticon />
+        <IconButton onClick={OpenEmoji}>
+          <InsertEmoticon />
+        </IconButton>
+
         <form>
           <input
             value={input}
