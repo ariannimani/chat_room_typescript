@@ -74,6 +74,7 @@ function Chat() {
         messageUserId: Number(
           userState.users.usersData.map((user) => user.userId)
         ),
+        messageUserName: userState.users.usersData.map((user) => user.userName),
         timestamp: current,
       },
     });
@@ -206,7 +207,6 @@ function Chat() {
 
   return (
     <div className="chat">
-      {console.log(messagesState.messages.messagesData)}
       <div className="chat__header">
         <Avatar src={`https://avatars.dicebear.com/api/human/${seed}.svg`} />
         <div className="chat__headerInfo">
@@ -270,8 +270,8 @@ function Chat() {
                   ) && (!message.deleted ? "chat__reciever" : `chat__deleted`)
               }`}
             >
-              <span className="chat__name">{message.name}</span>
-              <div className="chat__box">
+              <span className="chat__name">{message.messageUserName}</span>
+              <span className="chat__box">
                 {!message.deleted ? (
                   message.message
                 ) : (
@@ -283,7 +283,7 @@ function Chat() {
                 <span className="chat__timestamp">
                   {Time(true, message.timestamp)}
                 </span>
-              </div>
+              </span>
             </p>
             <Menu
               open={contextMenu !== null}

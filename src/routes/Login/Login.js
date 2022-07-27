@@ -4,23 +4,39 @@ import { ADD_USER } from "../../context/actions/actions";
 import { StateContext } from "../../context/StateProvider";
 import "./Login.css";
 import { users } from "../../data/users";
-import { Alert } from "@mui/material";
+import { Alert, IconButton, InputAdornment } from "@mui/material";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 
 function Login() {
   const [userName, setUserName] = useState("");
-  const [password, setPassword] = useState("");
+  const [password, setPassword] = useState({ value: "", showPassword: false });
   const [message, setMessage] = useState(null);
   const { userDispatch } = useContext(StateContext);
 
   const signIn = () => {
     if (
       users.some(
-        (user) => user.userName === userName && user.password === password
+        (user) => user.userName === userName && user.password === password.value
       )
     ) {
       userDispatch({
         type: ADD_USER,
-        playload: userName,
+        playload: {
+          userName: users
+            .filter(
+              (filterUser) =>
+                filterUser.userName === userName &&
+                filterUser.password === password.value
+            )
+            .map((user) => user.userName),
+          userId: users
+            .filter(
+              (filterUser) =>
+                filterUser.userName === userName &&
+                filterUser.password === password.value
+            )
+            .map((user) => user.userId),
+        },
       });
       setMessage(null);
     } else {
@@ -28,6 +44,17 @@ function Login() {
       setUserName("");
       setPassword("");
     }
+  };
+
+  const handleClickShowPassword = () => {
+    setPassword({
+      ...password,
+      showPassword: !password.showPassword,
+    });
+  };
+
+  const handleMouseDownPassword = (event) => {
+    event.preventDefault();
   };
 
   return (
@@ -50,13 +77,28 @@ function Login() {
             variant="standard"
             onChange={(e) => setUserName(e.target.value)}
           />
+
           <TextField
-            value={password}
-            id="standard-basic"
+            value={password.value}
+            name="password"
+            type={!password.showPassword ? "password" : "text"}
             label="Password"
-            variant="standard"
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={(e) => setPassword({ value: e.target.value })}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label="toggle password visibility"
+                    onClick={handleClickShowPassword}
+                    onMouseDown={handleMouseDownPassword}
+                  >
+                    {password.showPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              ),
+            }}
           />
+
           <Button onClick={signIn}>Sign In</Button>
         </div>
       </div>

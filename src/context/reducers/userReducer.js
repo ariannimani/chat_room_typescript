@@ -10,12 +10,12 @@ const userReducer = (state, action) => {
           usersData: [
             ...state.users.usersData,
             {
-              userName: action.playload,
-              userId:
-                state.users.usersData.length > 0
-                  ? state.users.usersData[state.users.usersData.length - 1]
-                      .userId + 1
-                  : 1,
+              userName: action.playload.userName,
+              userId: action.playload.userId,
+              //state.users.usersData.length > 0
+              //  ? state.users.usersData[state.users.usersData.length - 1]
+              //      .userId + 1
+              //  : 1,
             },
           ],
         },

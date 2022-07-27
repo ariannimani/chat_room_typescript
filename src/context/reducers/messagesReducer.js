@@ -18,6 +18,7 @@ const messageReducer = (state, action) => {
               messageId: action.playload.messageId,
               messageChatId: action.playload.messageChatId,
               messageUserId: action.playload.messageUserId,
+              messageUserName: action.playload.messageUserName,
               timestamp: action.playload.timestamp,
               deleted: false,
             },
