@@ -96,3 +96,9 @@
   padding: 10px;
   color: gray;
 }
+
+.chat__search > input {
+  border: none;
+  height: 20px;
+  width: 150px;
+}

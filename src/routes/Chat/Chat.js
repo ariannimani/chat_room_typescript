@@ -33,6 +33,8 @@ function Chat() {
   const navigate = useNavigate();
   const [chosenEmoji, setChosenEmoji] = useState(null);
   const [emojiOpen, setEmojiOpen] = useState(false);
+  const [searchMessage, setSearchMessage] = useState("");
+  const [searchShow, setSearchShow] = useState(false);
 
   const weekday = [
     "Sunday",
@@ -156,10 +158,23 @@ function Chat() {
 
   const onEmojiClick = (event, emojiObject) => {
     setChosenEmoji(emojiObject);
-    setInput(input + chosenEmoji.emoji);
-    setChosenEmoji(null);
+    if (chosenEmoji !== null) {
+      setInput(input + chosenEmoji.emoji);
+    }
   };
 
+  const searchShowHandler = () => {
+    setSearchShow(!searchShow);
+  };
+
+  const SearchMessages = () => {
+    const DataMessages = messagesState.messages.messagesData.filter((m) =>
+      m.message.toLowerCase().includes(searchMessage.toLowerCase()) ? m : ""
+    );
+    return DataMessages.filter(
+      (filterMessage) => filterMessage.messageChatId === Number(roomId)
+    );
+  };
   return (
     <div className="chat">
       <div className="chat__header">
@@ -169,9 +184,21 @@ function Chat() {
           <p>{Day()}</p>
         </div>
         <div className="chat__headerRight">
-          <IconButton>
-            <SearchOutlined />
-          </IconButton>
+          <div className="chat__search">
+            <IconButton onClick={searchShowHandler}>
+              <SearchOutlined />
+            </IconButton>
+            {searchShow ? (
+              <input
+                placeholder="Search message"
+                type="text"
+                value={searchMessage}
+                onChange={(e) => setSearchMessage(e.target.value)}
+              ></input>
+            ) : (
+              ""
+            )}
+          </div>
           <IconButton>
             <AttachFile />
           </IconButton>
@@ -199,35 +226,24 @@ function Chat() {
         </div>
       </div>
       <div className="chat__body" id="scroll-to-bottom">
-        {messagesState.messages.messagesData
-          .filter(
-            (filterMessage) => filterMessage.messageChatId === Number(roomId)
-          )
-          .map((message) => (
-            <p
-              className={`chat__message ${
-                message.messageUserId ===
-                  Number(
-                    userState.users.usersData.map((user) => user.userId)
-                  ) && "chat__reciever"
-              }`}
-              key={message.messageId}
-            >
-              <span className="chat__name">{message.name}</span>
-              {message.message}
-              <span className="chat__timestamp">
-                {Time(true, message.timestamp)}
-              </span>
-            </p>
-          ))}
+        {SearchMessages().map((message) => (
+          <p
+            className={`chat__message ${
+              message.messageUserId ===
+                Number(userState.users.usersData.map((user) => user.userId)) &&
+              "chat__reciever"
+            }`}
+            key={message.messageId}
+          >
+            <span className="chat__name">{message.name}</span>
+            {message.message}
+            <span className="chat__timestamp">
+              {Time(true, message.timestamp)}
+            </span>
+          </p>
+        ))}
       </div>
-      <div>
-        {emojiOpen ? (
-          <Picker style={{ width: "100px" }} onEmojiClick={onEmojiClick} />
-        ) : (
-          ""
-        )}
-      </div>
+      <div>{emojiOpen ? <Picker onEmojiClick={onEmojiClick} /> : ""}</div>
       <div className="chat__footer">
         <IconButton onClick={OpenEmoji}>
           <InsertEmoticon />
