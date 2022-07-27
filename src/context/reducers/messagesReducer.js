@@ -1,4 +1,8 @@
-import { ADD_MESSAGE, DELETE_ROOM_MESSAGE } from "../actions/actions";
+import {
+  ADD_MESSAGE,
+  DELETE_MESSAGE,
+  DELETE_ROOM_MESSAGE,
+} from "../actions/actions";
 
 const messageReducer = (state, action) => {
   switch (action.type) {
@@ -15,6 +19,7 @@ const messageReducer = (state, action) => {
               messageChatId: action.playload.messageChatId,
               messageUserId: action.playload.messageUserId,
               timestamp: action.playload.timestamp,
+              deleted: false,
             },
           ],
         },
@@ -29,6 +34,23 @@ const messageReducer = (state, action) => {
             ...state.messages.messagesData.filter(
               (message) => message.messageChatId !== action.playload.roomId
             ),
+          ],
+        },
+      };
+    }
+    case DELETE_MESSAGE: {
+      return {
+        ...state,
+        messages: {
+          ...state.messages,
+          messagesData: [
+            ...state.messages.messagesData.map((obj) => {
+              if (obj.messageId === action.playload.messageId) {
+                return { ...obj, deleted: true };
+              }
+
+              return obj;
+            }),
           ],
         },
       };

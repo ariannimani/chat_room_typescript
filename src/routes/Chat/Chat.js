@@ -7,11 +7,13 @@ import {
   Mic,
   MoreVert,
   SearchOutlined,
+  DoDisturbAlt,
 } from "@mui/icons-material";
 import { useNavigate, useParams } from "react-router-dom";
 import { StateContext } from "../../context/StateProvider";
 import {
   ADD_MESSAGE,
+  DELETE_MESSAGE,
   DELETE_ROOM,
   DELETE_ROOM_MESSAGE,
 } from "../../context/actions/actions";
@@ -28,13 +30,14 @@ function Chat() {
     roomsState,
     roomsDispatch,
   } = useContext(StateContext);
-  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const navigate = useNavigate();
   const [chosenEmoji, setChosenEmoji] = useState(null);
   const [emojiOpen, setEmojiOpen] = useState(false);
   const [searchMessage, setSearchMessage] = useState("");
   const [searchShow, setSearchShow] = useState(false);
+  const [contextMenu, setContextMenu] = useState(null);
 
   const weekday = [
     "Sunday",
@@ -171,12 +174,39 @@ function Chat() {
     const DataMessages = messagesState.messages.messagesData.filter((m) =>
       m.message.toLowerCase().includes(searchMessage.toLowerCase()) ? m : ""
     );
+
     return DataMessages.filter(
       (filterMessage) => filterMessage.messageChatId === Number(roomId)
     );
   };
+
+  const handleContextMenu = (event) => {
+    event.preventDefault();
+    setContextMenu(
+      contextMenu === null
+        ? {
+            mouseX: event.clientX + 2,
+            mouseY: event.clientY - 6,
+          }
+        : null
+    );
+  };
+
+  const handleCloseContextMenu = () => {
+    setContextMenu(null);
+  };
+
+  const deleteMessageHandler = (e) => {
+    messagesDispatch({
+      type: DELETE_MESSAGE,
+      playload: { messageId: Number(e.target.value) },
+    });
+    handleCloseContextMenu();
+  };
+
   return (
     <div className="chat">
+      {console.log(messagesState.messages.messagesData)}
       <div className="chat__header">
         <Avatar src={`https://avatars.dicebear.com/api/human/${seed}.svg`} />
         <div className="chat__headerInfo">
@@ -227,20 +257,52 @@ function Chat() {
       </div>
       <div className="chat__body" id="scroll-to-bottom">
         {SearchMessages().map((message) => (
-          <p
-            className={`chat__message ${
-              message.messageUserId ===
-                Number(userState.users.usersData.map((user) => user.userId)) &&
-              "chat__reciever"
-            }`}
+          <div
+            onContextMenu={handleContextMenu}
+            style={{ cursor: "context-menu" }}
             key={message.messageId}
           >
-            <span className="chat__name">{message.name}</span>
-            {message.message}
-            <span className="chat__timestamp">
-              {Time(true, message.timestamp)}
-            </span>
-          </p>
+            <p
+              className={`chat__message ${
+                message.messageUserId ===
+                  Number(
+                    userState.users.usersData.map((user) => user.userId)
+                  ) && (!message.deleted ? "chat__reciever" : `chat__deleted`)
+              }`}
+            >
+              <span className="chat__name">{message.name}</span>
+              <div className="chat__box">
+                {!message.deleted ? (
+                  message.message
+                ) : (
+                  <span className="chat__deleted__text">
+                    <DoDisturbAlt fontSize="small" />
+                    <p>"This message is deleted"</p>
+                  </span>
+                )}
+                <span className="chat__timestamp">
+                  {Time(true, message.timestamp)}
+                </span>
+              </div>
+            </p>
+            <Menu
+              open={contextMenu !== null}
+              onClose={handleClose}
+              anchorReference="anchorPosition"
+              anchorPosition={
+                contextMenu !== null
+                  ? { top: contextMenu.mouseY, left: contextMenu.mouseX }
+                  : undefined
+              }
+            >
+              <MenuItem
+                value={message.messageId}
+                onClick={deleteMessageHandler}
+              >
+                Delete message
+              </MenuItem>
+            </Menu>
+          </div>
         ))}
       </div>
       <div>{emojiOpen ? <Picker onEmojiClick={onEmojiClick} /> : ""}</div>

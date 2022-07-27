@@ -7,6 +7,7 @@ const messagesInitialState = {
         messageChatId: 1,
         messageUserId: 1,
         timestamp: 1658325608,
+        deleted: false,
       },
       {
         message: "Not yet!",
@@ -14,6 +15,7 @@ const messagesInitialState = {
         messageChatId: 1,
         messageUserId: 2,
         timestamp: 1658642408,
+        deleted: false,
       },
       {
         message: "Let's play basketball today",
@@ -21,6 +23,7 @@ const messagesInitialState = {
         messageChatId: 2,
         messageUserId: 2,
         timestamp: 1658908808,
+        deleted: false,
       },
       {
         message: "Ok!",
@@ -28,6 +31,7 @@ const messagesInitialState = {
         messageChatId: 1,
         messageUserId: 1,
         timestamp: 1658304008,
+        deleted: false,
       },
       {
         message: "I can't today. Sorry!",
@@ -35,6 +39,7 @@ const messagesInitialState = {
         messageChatId: 2,
         messageUserId: 1,
         timestamp: 1658908808,
+        deleted: false,
       },
     ],
   },

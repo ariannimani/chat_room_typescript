@@ -68,6 +68,23 @@
   background-color: #dcf8c6;
 }
 
+.chat__deleted {
+  margin-left: auto;
+  background-color: gray;
+  font-size: 12px;
+  color: gray;
+  background-color: #dcf8c6;
+}
+.chat__box {
+  display: flex;
+  flex-direction: row;
+}
+.chat__deleted__text {
+  display: flex;
+  flex-direction: row;
+  gap: 5px;
+}
+
 .chat__footer {
   display: flex;
   justify-content: space-between;

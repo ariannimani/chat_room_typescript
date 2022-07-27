@@ -5,3 +5,4 @@ export const ADD_USER = "ADD_USER";
 export const ERROR_ADD = "ERROR_ADD";
 export const DELETE_ROOM_MESSAGE = "DELETE_ROOM_MESSAGE";
 export const LOGOUT_USER = "LOGOUT_USER";
+export const DELETE_MESSAGE = "DELETE_MESSAGE";
