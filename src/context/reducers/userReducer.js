@@ -1,4 +1,4 @@
-import { ADD_USER, LOGOUT_USER } from "../actions/actions";
+import { ADD_USER, CHANGE_USER_NAME, LOGOUT_USER } from "../actions/actions";
 
 const userReducer = (state, action) => {
   switch (action.type) {
@@ -27,6 +27,22 @@ const userReducer = (state, action) => {
         users: {
           ...state.users,
           usersData: [],
+        },
+      };
+    }
+    case CHANGE_USER_NAME: {
+      return {
+        ...state,
+        users: {
+          ...state.users,
+          usersData: [
+            ...state.users.usersData.map((user) => {
+              if (user.userId === action.playload.userId) {
+                return { ...user, userName: action.playload.userName };
+              }
+              return user;
+            }),
+          ],
         },
       };
     }

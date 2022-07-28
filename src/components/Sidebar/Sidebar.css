@@ -36,6 +36,24 @@
   border-right: 1px solid lightgray;
 }
 
+.sidebar___user {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.sidebar__changeUsername {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.sidebar__changeUsername > button {
+  text-transform: inherit !important;
+  background-color: #0a8d48 !important;
+  color: white;
+}
+
 .sidebar__headerRight {
   display: flex;
   align-items: center;

@@ -176,8 +176,6 @@ function Chat() {
     const DataMessages = messagesState.messages.messagesData.filter((m) =>
       m.message.toLowerCase().includes(searchMessage.toLowerCase()) ? m : ""
     );
-    console.log(DataMessages);
-
     if (searchMessage === "") {
       return DataMessages.filter(
         (filterMessage) => filterMessage.messageChatId === Number(roomId)

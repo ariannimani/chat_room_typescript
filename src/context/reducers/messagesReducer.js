@@ -2,6 +2,7 @@ import {
   ADD_MESSAGE,
   DELETE_MESSAGE,
   DELETE_ROOM_MESSAGE,
+  USER_CHANGE_MESSAGE,
 } from "../actions/actions";
 
 const messageReducer = (state, action) => {
@@ -18,7 +19,7 @@ const messageReducer = (state, action) => {
               messageId: action.playload.messageId,
               messageChatId: action.playload.messageChatId,
               messageUserId: action.playload.messageUserId,
-              messageUserName: action.playload.messageUserName,
+              messageUserName: action.playload.messageUserName.toString(),
               timestamp: action.playload.timestamp,
               deleted: false,
             },
@@ -50,6 +51,25 @@ const messageReducer = (state, action) => {
                 return { ...obj, deleted: true };
               }
 
+              return obj;
+            }),
+          ],
+        },
+      };
+    }
+    case USER_CHANGE_MESSAGE: {
+      return {
+        ...state,
+        messages: {
+          ...state.messages,
+          messagesData: [
+            ...state.messages.messagesData.map((obj) => {
+              if (obj.messageUserId === action.playload.userId) {
+                return {
+                  ...obj,
+                  messageUserName: action.playload.newUserName,
+                };
+              }
               return obj;
             }),
           ],
