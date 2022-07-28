@@ -6,8 +6,7 @@ import { ADD_ROOM } from "../../context/actions/actions";
 import { StateContext } from "../../context/StateProvider";
 
 function SidebarChat({ id, name, addNewChat }) {
-  const { roomsState, messagesState, userState, roomsDispatch } =
-    useContext(StateContext);
+  const { roomsState, roomsDispatch } = useContext(StateContext);
 
   const createChat = () => {
     let addRoomName = prompt("Please eneter name for chat room!");

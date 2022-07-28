@@ -176,10 +176,19 @@ function Chat() {
     const DataMessages = messagesState.messages.messagesData.filter((m) =>
       m.message.toLowerCase().includes(searchMessage.toLowerCase()) ? m : ""
     );
+    console.log(DataMessages);
 
-    return DataMessages.filter(
-      (filterMessage) => filterMessage.messageChatId === Number(roomId)
-    );
+    if (searchMessage === "") {
+      return DataMessages.filter(
+        (filterMessage) => filterMessage.messageChatId === Number(roomId)
+      );
+    } else {
+      return DataMessages.filter(
+        (filterMessage) =>
+          filterMessage.messageChatId === Number(roomId) &&
+          !filterMessage.deleted
+      );
+    }
   };
 
   const handleContextMenu = (event) => {
@@ -211,9 +220,11 @@ function Chat() {
     handleCloseContextMenu();
   };
 
-  const handleContextMenuClick = (e, id, userId) => {
-    handleContextMenu(e);
-    setDeleteId({ id: id, userId: userId });
+  const handleContextMenuClick = (e, message, userId) => {
+    if (message.messageUserId === userId && !message.deleted) {
+      handleContextMenu(e);
+      setDeleteId({ id: message.messageId, userId: message.messageUserId });
+    }
   };
 
   return (
@@ -272,8 +283,8 @@ function Chat() {
             onContextMenu={(e) =>
               handleContextMenuClick(
                 e,
-                message.messageId,
-                message.messageUserId
+                message,
+                Number(userState.users.usersData[0].userId)
               )
             }
             //onClick={() => setDeleteId(message.messageId)}
@@ -295,7 +306,7 @@ function Chat() {
                 ) : (
                   <span className="chat__deleted__text">
                     <DoDisturbAlt fontSize="small" />
-                    <p>"This message is deleted"</p>
+                    <span>"This message is deleted"</span>
                   </span>
                 )}
                 <span className="chat__timestamp">
