@@ -1,4 +1,4 @@
-import { Button, TextField } from "@material-ui/core";
+import { Button, TextField } from "@mui/material";
 import React, { useContext, useState } from "react";
 import { ADD_USER } from "../../context/actions/actions";
 import { StateContext } from "../../context/StateProvider";
@@ -84,6 +84,7 @@ function Login() {
             type={!password.showPassword ? "password" : "text"}
             label="Password"
             onChange={(e) => setPassword({ value: e.target.value })}
+            variant="standard"
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">

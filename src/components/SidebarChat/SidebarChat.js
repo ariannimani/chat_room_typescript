@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import "./SidebarChat.css";
-import { Avatar } from "@material-ui/core";
+import { Avatar } from "@mui/material";
 import { Link } from "react-router-dom";
 import { ADD_ROOM } from "../../context/actions/actions";
 import { StateContext } from "../../context/StateProvider";
