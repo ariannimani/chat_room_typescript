@@ -1,8 +1,18 @@
-import { ADD_ROOM, DELETE_ROOM, ERROR_ADD } from "../actions/actions";
+import { ACTIONS, IActionWithPayload } from "../actions/actions";
+import { IRoomsState } from "../initialstates/roomsIntitialState";
 
-const roomsReducer = (state, action) => {
+export interface IActionsRooms {
+  roomName?: string | null;
+  roomOwner?: number;
+  roomId?: number;
+}
+
+const roomsReducer = (
+  state: IRoomsState,
+  action: IActionWithPayload<IActionsRooms>
+) => {
   switch (action.type) {
-    case ADD_ROOM: {
+    case ACTIONS.ADD_ROOM: {
       return {
         ...state,
         rooms: {
@@ -10,8 +20,8 @@ const roomsReducer = (state, action) => {
           roomsData: [
             ...state.rooms.roomsData,
             {
-              roomName: action.playload.roomName,
-              roomOwner: action.playload.roomOwner,
+              roomName: action.payload.roomName,
+              roomOwner: action.payload.roomOwner,
               roomId:
                 state.rooms.roomsData.length > 0
                   ? state.rooms.roomsData[state.rooms.roomsData.length - 1]
@@ -22,20 +32,20 @@ const roomsReducer = (state, action) => {
         },
       };
     }
-    case DELETE_ROOM: {
+    case ACTIONS.DELETE_ROOM: {
       return {
         ...state,
         rooms: {
           ...state.rooms,
           roomsData: [
             ...state.rooms.roomsData.filter(
-              (room) => room.roomId !== action.playload.roomId
+              (room) => room.roomId !== action.payload.roomId
             ),
           ],
         },
       };
     }
-    case ERROR_ADD: {
+    case ACTIONS.ERROR_ADD: {
       return {
         ...state,
         rooms: {

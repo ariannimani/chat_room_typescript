@@ -11,17 +11,24 @@ import {
 } from "@mui/icons-material";
 import { useNavigate, useParams } from "react-router-dom";
 import { StateContext } from "../../context/StateProvider";
-import {
-  ADD_MESSAGE,
-  DELETE_MESSAGE,
-  DELETE_ROOM,
-  DELETE_ROOM_MESSAGE,
-} from "../../context/actions/actions";
-import Picker from "emoji-picker-react";
+import { ACTIONS } from "../../context/actions/actions";
+import Picker, { IEmojiData } from "emoji-picker-react";
+import { IRoomsData } from "../../context/initialstates/roomsIntitialState";
+import { IMessagesData } from "../../context/initialstates/messagesInitialState";
 
-function Chat() {
-  const [input, setInput] = useState("");
-  const [seed, setSeed] = useState("");
+export interface IDeletedAction {
+  id?: number;
+  userId?: number;
+}
+
+export interface IContextMenu {
+  mouseX: number;
+  mouseY: number;
+}
+
+const Chat = () => {
+  const [input, setInput] = useState<string>("");
+  const [seed, setSeed] = useState<string | undefined>("");
   const { roomId } = useParams();
   const {
     messagesState,
@@ -30,15 +37,18 @@ function Chat() {
     roomsState,
     roomsDispatch,
   } = useContext(StateContext);
-  const [anchorEl, setAnchorEl] = useState(null);
+  const [anchorEl, setAnchorEl] = useState(false);
   const open = Boolean(anchorEl);
   const navigate = useNavigate();
-  const [chosenEmoji, setChosenEmoji] = useState(null);
+  const [chosenEmoji, setChosenEmoji] = useState<string | null | any>(null);
   const [emojiOpen, setEmojiOpen] = useState(false);
   const [searchMessage, setSearchMessage] = useState("");
   const [searchShow, setSearchShow] = useState(false);
-  const [contextMenu, setContextMenu] = useState(null);
-  const [deleteId, setDeleteId] = useState({ id: "", userId: "" });
+  const [contextMenu, setContextMenu] = useState<IContextMenu | null>(null);
+  const [deleteId, setDeleteId] = useState<IDeletedAction>({
+    id: 0,
+    userId: 0,
+  });
 
   const weekday = [
     "Sunday",
@@ -56,14 +66,16 @@ function Chat() {
 
   const ScrollToBottom = () => {
     let scroll_to_bottom = document.getElementById("scroll-to-bottom");
-    scroll_to_bottom.scrollTop = scroll_to_bottom.scrollHeight;
+    if (scroll_to_bottom !== null) {
+      scroll_to_bottom.scrollTop = scroll_to_bottom.scrollHeight;
+    }
   };
-  const sendMessage = (e) => {
+  const sendMessage = (e: { preventDefault: () => void }) => {
     e.preventDefault();
-    const current = new Date() / 1000;
+    const current = Number(new Date()) / 1000;
     messagesDispatch({
-      type: ADD_MESSAGE,
-      playload: {
+      type: ACTIONS.ADD_MESSAGE,
+      payload: {
         message: input,
         messageId:
           messagesState.messages.messagesData.length > 0
@@ -85,22 +97,22 @@ function Chat() {
 
   const Room = () => {
     const activeRoom = roomsState.rooms.roomsData.filter(
-      (room) => room.roomId === Number(roomId)
+      (room: IRoomsData) => room.roomId === Number(roomId)
     );
-    return activeRoom.map((room) => room.roomName);
+    return activeRoom.map((room: IRoomsData) => room.roomName);
   };
-  const Time = (newTimeBool, newDateTime) => {
+  const Time = (newTimeBool: boolean, newDateTime: string | undefined) => {
     const messagesData = messagesState.messages.messagesData.filter(
-      (message) => message.messageChatId === Number(roomId)
+      (message: IMessagesData) => message.messageChatId === Number(roomId)
     );
-    let newDate = "";
+    let newDate: string | number | undefined = "";
     if (newTimeBool) {
       newDate = newDateTime;
     } else {
       newDate = messagesData[messagesData.length - 1]?.timestamp;
     }
 
-    const date = new Date(newDate * 1000);
+    const date = new Date(Number(newDate) * 1000);
     const hours = date.getHours();
     const minutes = "0" + date.getMinutes();
     return hours + ":" + minutes.substr(-2);
@@ -108,7 +120,7 @@ function Chat() {
 
   const Day = () => {
     const messagesData = messagesState.messages.messagesData.filter(
-      (message) => message.messageChatId === Number(roomId)
+      (message: IMessagesData) => message.messageChatId === Number(roomId)
     );
     const date = new Date(
       messagesData[messagesData.length - 1]?.timestamp * 1000
@@ -128,31 +140,32 @@ function Chat() {
       date.getFullYear() === today.getFullYear();
 
     if (dateDigit === dayOfWeekDigit && dayToday) {
-      return "last seen Today at " + Time(false);
+      return "last seen Today at " + Time(false, "");
     } else if (dateDigit === dayOfWeekDigit - 1 && dayYesterday) {
-      return "last seen Yesterday at" + Time(false);
+      return "last seen Yesterday at" + Time(false, "");
     } else if (week !== undefined) {
-      return "last seen on " + week + " at " + Time(false);
+      return "last seen on " + week + " at " + Time(false, "");
     }
   };
 
-  const handleClick = (event) => {
+  const handleClick = (event: any) => {
     setAnchorEl(event.currentTarget);
   };
+
   const handleClose = () => {
-    setAnchorEl(null);
+    setAnchorEl(false);
   };
 
   const deleteRoom = () => {
     handleClose();
     roomsDispatch({
-      type: DELETE_ROOM,
-      playload: { roomId: Number(roomId) },
+      type: ACTIONS.DELETE_ROOM,
+      payload: { roomId: Number(roomId) },
     });
 
     messagesDispatch({
-      type: DELETE_ROOM_MESSAGE,
-      playload: { roomId: Number(roomId) },
+      type: ACTIONS.DELETE_ROOM_MESSAGE,
+      payload: { roomId: Number(roomId) },
     });
     navigate("/");
   };
@@ -161,8 +174,11 @@ function Chat() {
     setEmojiOpen(!emojiOpen);
   };
 
-  const onEmojiClick = (event, emojiObject) => {
-    setChosenEmoji(emojiObject);
+  const onEmojiClick = (
+    event: React.MouseEvent<Element, MouseEvent>,
+    data: IEmojiData
+  ) => {
+    //setChosenEmoji(emojiObject);
     if (chosenEmoji !== null) {
       setInput(input + chosenEmoji.emoji);
     }
@@ -189,7 +205,9 @@ function Chat() {
     }
   };
 
-  const handleContextMenu = (event) => {
+  const handleContextMenu = (
+    event: React.MouseEvent<HTMLDivElement, MouseEvent>
+  ) => {
     event.preventDefault();
     setContextMenu(
       contextMenu === null
@@ -205,20 +223,24 @@ function Chat() {
     setContextMenu(null);
   };
 
-  const deleteMessageHandler = (e) => {
+  const deleteMessageHandler = () => {
     if (
       Number(userState.users.usersData.map((user) => user.userId)) ===
       deleteId.userId
     ) {
       messagesDispatch({
-        type: DELETE_MESSAGE,
-        playload: { messageId: Number(deleteId.id) },
+        type: ACTIONS.DELETE_MESSAGE,
+        payload: { messageId: Number(deleteId.id) },
       });
     }
     handleCloseContextMenu();
   };
 
-  const handleContextMenuClick = (e, message, userId) => {
+  const handleContextMenuClick = (
+    e: React.MouseEvent<HTMLDivElement, MouseEvent>,
+    message: IMessagesData,
+    userId: number
+  ) => {
     if (message.messageUserId === userId && !message.deleted) {
       handleContextMenu(e);
       setDeleteId({ id: message.messageId, userId: message.messageUserId });
@@ -252,7 +274,7 @@ function Chat() {
           <IconButton>
             <AttachFile />
           </IconButton>
-          <IconButton onClick={handleClick}>
+          <IconButton onClick={() => handleClick}>
             <MoreVert />
           </IconButton>
           <Menu
@@ -308,7 +330,7 @@ function Chat() {
                   </span>
                 )}
                 <span className="chat__timestamp">
-                  {Time(true, message.timestamp)}
+                  {Time(true, message.timestamp.toString())}
                 </span>
               </span>
             </p>
@@ -353,6 +375,6 @@ function Chat() {
       </div>
     </div>
   );
-}
+};
 
 export default Chat;

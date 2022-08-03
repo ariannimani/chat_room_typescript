@@ -12,26 +12,25 @@ import {
   MenuItem,
   TextField,
 } from "@mui/material";
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import "./Sidebar.css";
 import SidebarChat from "../SidebarChat/SidebarChat";
 import { StateContext } from "../../context/StateProvider";
 import { useNavigate } from "react-router-dom";
-import {
-  CHANGE_USER_NAME,
-  LOGOUT_USER,
-  USER_CHANGE_MESSAGE,
-} from "../../context/actions/actions";
-
+import { ACTIONS } from "../../context/actions/actions";
+import { useContext } from "react";
+import { IRoomsData } from "../../context/initialstates/roomsIntitialState";
 function Sidebar() {
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState<string>("");
 
   const { roomsState, userDispatch, userState, messagesDispatch } =
     useContext(StateContext);
-  const [anchorEl, setAnchorEl] = useState(null);
-  const [anchorElUser, setAnchorElUser] = useState(null);
-  const [changeUser, setChangeUser] = useState(false);
-  const [newUserName, setNewUserName] = useState("");
+  const [anchorEl, setAnchorEl] = useState(false);
+  const [anchorElUser, setAnchorElUser] = useState<boolean | null | undefined>(
+    null
+  );
+  const [changeUser, setChangeUser] = useState<boolean>(false);
+  const [newUserName, setNewUserName] = useState<string>("");
 
   const open = Boolean(anchorEl);
   const openUser = Boolean(anchorElUser);
@@ -39,30 +38,38 @@ function Sidebar() {
   const navigate = useNavigate();
 
   const SearchRoom = () => {
-    const DataRooms = roomsState.rooms.roomsData.filter((room) =>
-      room.roomName.toLowerCase().includes(search.toLowerCase()) ? room : ""
+    const DataRooms = roomsState.rooms.roomsData.filter(
+      (room: { roomName: string }) =>
+        room.roomName.toLowerCase().includes(search.toLowerCase()) ? room : ""
     );
 
     return DataRooms;
   };
-  const handleClick = (event) => {
+  const handleClick = (event: {
+    currentTarget: boolean | ((prevState: boolean) => boolean);
+  }) => {
     setAnchorEl(event.currentTarget);
   };
   const handleClose = () => {
-    setAnchorEl(null);
-    setAnchorElUser(null);
+    setAnchorEl(false);
+    setAnchorElUser(false);
   };
 
   const LogOut = () => {
+    const user = userState.users.usersData[0];
     userDispatch({
-      type: LOGOUT_USER,
-      playload: "",
+      type: ACTIONS.LOGOUT_USER,
+      payload: { userId: user.userId },
     });
     handleClose();
     navigate("/");
   };
 
-  const handleChangeUserClick = (event) => {
+  const handleChangeUserClick = (event: {
+    currentTarget:
+      | boolean
+      | ((prevState: boolean | null | undefined) => boolean | null | undefined);
+  }) => {
     setAnchorElUser(event.currentTarget);
   };
   const openChangeUserName = () => {
@@ -77,14 +84,14 @@ function Sidebar() {
   const changeUserName = () => {
     const user = userState.users.usersData[0];
     userDispatch({
-      type: CHANGE_USER_NAME,
-      playload: { userId: user.userId, userName: newUserName },
+      type: ACTIONS.CHANGE_USER_NAME,
+      payload: { userId: user.userId, userName: newUserName },
     });
     messagesDispatch({
-      type: USER_CHANGE_MESSAGE,
-      playload: {
-        userId: Number(user.userId),
-        newUserName: newUserName,
+      type: ACTIONS.USER_CHANGE_MESSAGE,
+      payload: {
+        messageUserId: Number(user.userId),
+        messageUserName: newUserName,
       },
     });
     setChangeUser(false);
@@ -100,7 +107,7 @@ function Sidebar() {
               src={`https://avatars.dicebear.com/api/human/${Math.floor(
                 Math.random()
               )}.svg`}
-              onClick={handleChangeUserClick}
+              onClick={() => handleChangeUserClick}
             />
           }
           <Menu
@@ -146,7 +153,7 @@ function Sidebar() {
           <IconButton>
             <Chat />
           </IconButton>
-          <IconButton onClick={handleClick}>
+          <IconButton onClick={() => handleClick}>
             <MoreVert />
           </IconButton>
           <Menu
@@ -181,10 +188,11 @@ function Sidebar() {
         </div>
       </div>
       <div className="sidebar__chats">
-        <SidebarChat addNewChat />
+        <SidebarChat addNewChat={""} id={null} name={""} />
         {SearchRoom().length > 0
-          ? SearchRoom().map((room) => (
+          ? SearchRoom().map((room: IRoomsData) => (
               <SidebarChat
+                addNewChat={""}
                 key={room.roomId}
                 id={room.roomId}
                 name={room.roomName}

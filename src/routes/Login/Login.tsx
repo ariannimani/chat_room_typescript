@@ -1,16 +1,24 @@
 import { Button, TextField } from "@mui/material";
 import React, { useContext, useState } from "react";
-import { ADD_USER } from "../../context/actions/actions";
+import { ACTIONS } from "../../context/actions/actions";
 import { StateContext } from "../../context/StateProvider";
 import "./Login.css";
 import { users } from "../../data/users";
 import { Alert, IconButton, InputAdornment } from "@mui/material";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 
-function Login() {
-  const [userName, setUserName] = useState("");
-  const [password, setPassword] = useState({ value: "", showPassword: false });
-  const [message, setMessage] = useState(null);
+interface IPassword {
+  value: string | "";
+  showPassword?: boolean;
+}
+
+const Login = () => {
+  const [userName, setUserName] = useState<string | "">("");
+  const [password, setPassword] = useState<IPassword>({
+    value: "",
+    showPassword: false,
+  });
+  const [message, setMessage] = useState<string | null>(null);
   const { userDispatch } = useContext(StateContext);
 
   const signIn = () => {
@@ -20,8 +28,8 @@ function Login() {
       )
     ) {
       userDispatch({
-        type: ADD_USER,
-        playload: {
+        type: ACTIONS.ADD_USER,
+        payload: {
           userName: users
             .filter(
               (filterUser) =>
@@ -42,7 +50,7 @@ function Login() {
     } else {
       setMessage("Username or Password Incorrect");
       setUserName("");
-      setPassword("");
+      setPassword({ value: "", showPassword: false });
     }
   };
 
@@ -53,7 +61,7 @@ function Login() {
     });
   };
 
-  const handleMouseDownPassword = (event) => {
+  const handleMouseDownPassword = (event: { preventDefault: () => void }) => {
     event.preventDefault();
   };
 
@@ -105,6 +113,6 @@ function Login() {
       </div>
     </div>
   );
-}
+};
 
 export default Login;

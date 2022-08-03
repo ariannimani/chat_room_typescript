@@ -5,8 +5,7 @@ import { Routes, Route } from "react-router-dom";
 import React, { useContext } from "react";
 import { StateContext } from "./context/StateProvider";
 import Login from "./routes/Login/Login";
-
-function App() {
+const App = () => {
   const { userState } = useContext(StateContext);
   return (
     <div className="App">
@@ -16,13 +15,13 @@ function App() {
         <div className="app__body">
           <Sidebar />
           <Routes>
-            <Route path="/" index element={""} />
+            <Route path="/" element={""} />
             <Route path="/rooms/:roomId" element={<Chat />} />
           </Routes>
         </div>
       )}
     </div>
   );
-}
+};
 
 export default App;

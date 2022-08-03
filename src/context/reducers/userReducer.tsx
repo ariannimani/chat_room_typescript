@@ -1,8 +1,16 @@
-import { ADD_USER, CHANGE_USER_NAME, LOGOUT_USER } from "../actions/actions";
+import { ACTIONS, IActionWithPayload } from "../actions/actions";
+import { IUserState } from "../initialstates/userInitialState";
 
-const userReducer = (state, action) => {
+export interface IActionsUsers {
+  userName?: string | string[];
+  userId?: number | number[];
+}
+const userReducer = (
+  state: IUserState,
+  action: IActionWithPayload<IActionsUsers>
+) => {
   switch (action.type) {
-    case ADD_USER: {
+    case ACTIONS.ADD_USER: {
       return {
         ...state,
         users: {
@@ -10,8 +18,8 @@ const userReducer = (state, action) => {
           usersData: [
             ...state.users.usersData,
             {
-              userName: action.playload.userName,
-              userId: action.playload.userId,
+              userName: action.payload.userName,
+              userId: action.payload.userId,
               //state.users.usersData.length > 0
               //  ? state.users.usersData[state.users.usersData.length - 1]
               //      .userId + 1
@@ -21,7 +29,7 @@ const userReducer = (state, action) => {
         },
       };
     }
-    case LOGOUT_USER: {
+    case ACTIONS.LOGOUT_USER: {
       return {
         ...state,
         users: {
@@ -30,15 +38,15 @@ const userReducer = (state, action) => {
         },
       };
     }
-    case CHANGE_USER_NAME: {
+    case ACTIONS.CHANGE_USER_NAME: {
       return {
         ...state,
         users: {
           ...state.users,
           usersData: [
             ...state.users.usersData.map((user) => {
-              if (user.userId === action.playload.userId) {
-                return { ...user, userName: action.playload.userName };
+              if (user.userId === action.payload.userId) {
+                return { ...user, userName: action.payload.userName };
               }
               return user;
             }),

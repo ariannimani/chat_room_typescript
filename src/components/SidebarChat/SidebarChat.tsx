@@ -1,11 +1,22 @@
-import React, { useContext } from "react";
+import React, { FunctionComponent, useContext } from "react";
 import "./SidebarChat.css";
 import { Avatar } from "@mui/material";
 import { Link } from "react-router-dom";
-import { ADD_ROOM } from "../../context/actions/actions";
+import { ACTIONS } from "../../context/actions/actions";
 import { StateContext } from "../../context/StateProvider";
+import { IRoomsData } from "../../context/initialstates/roomsIntitialState";
 
-function SidebarChat({ id, name, addNewChat }) {
+interface ISidebarChat {
+  id: number | null;
+  name: string;
+  addNewChat: string;
+}
+
+const SidebarChat: FunctionComponent<ISidebarChat> = ({
+  id,
+  name,
+  addNewChat,
+}) => {
   const { roomsState, roomsDispatch } = useContext(StateContext);
 
   const createChat = () => {
@@ -14,7 +25,7 @@ function SidebarChat({ id, name, addNewChat }) {
     while (
       roomsState.rooms.roomsData.some(
         // eslint-disable-next-line no-loop-func
-        (room) => room.roomName === addRoomName
+        (room: IRoomsData) => room.roomName === addRoomName
       )
     ) {
       if (addRoomName === "") {
@@ -26,8 +37,8 @@ function SidebarChat({ id, name, addNewChat }) {
       }
     }
     roomsDispatch({
-      type: ADD_ROOM,
-      playload: { roomName: addRoomName, roomOwner: 1 },
+      type: ACTIONS.ADD_ROOM,
+      payload: { roomName: addRoomName, roomOwner: 1 },
     });
   };
 
@@ -46,6 +57,6 @@ function SidebarChat({ id, name, addNewChat }) {
       <h2> Add new Chat</h2>
     </div>
   );
-}
+};
 
 export default SidebarChat;

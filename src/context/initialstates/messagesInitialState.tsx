@@ -1,4 +1,19 @@
-const messagesInitialState = {
+export interface IMessagesState {
+  messages: IMessages;
+}
+export interface IMessages {
+  messagesData: IMessagesData[];
+}
+export interface IMessagesData {
+  message: string;
+  messageId: number;
+  messageChatId: number;
+  messageUserId: number;
+  messageUserName: string;
+  timestamp: number;
+  deleted: boolean;
+}
+const messagesInitialState: IMessagesState = {
   messages: {
     messagesData: [
       {

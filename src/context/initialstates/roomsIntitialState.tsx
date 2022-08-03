@@ -1,4 +1,15 @@
-const roomsIntitialState = {
+export interface IRoomsState {
+  rooms: IRooms;
+}
+export interface IRooms {
+  roomsData: IRoomsData[];
+}
+export interface IRoomsData {
+  roomName: string;
+  roomOwner: number;
+  roomId: number;
+}
+const roomsIntitialState: IRoomsState = {
   rooms: {
     roomsData: [
       {
