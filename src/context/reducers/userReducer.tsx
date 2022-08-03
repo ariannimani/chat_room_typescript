@@ -2,13 +2,13 @@ import { ACTIONS, IActionWithPayload } from "../actions/actions";
 import { IUserState } from "../initialstates/userInitialState";
 
 export interface IActionsUsers {
-  userName?: string | string[];
-  userId?: number | number[];
+  userName?: string;
+  userId?: number;
 }
 const userReducer = (
   state: IUserState,
   action: IActionWithPayload<IActionsUsers>
-) => {
+): IUserState => {
   switch (action.type) {
     case ACTIONS.ADD_USER: {
       return {

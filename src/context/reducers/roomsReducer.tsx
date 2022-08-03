@@ -2,7 +2,7 @@ import { ACTIONS, IActionWithPayload } from "../actions/actions";
 import { IRoomsState } from "../initialstates/roomsIntitialState";
 
 export interface IActionsRooms {
-  roomName?: string | null;
+  roomName?: string;
   roomOwner?: number;
   roomId?: number;
 }
@@ -10,7 +10,7 @@ export interface IActionsRooms {
 const roomsReducer = (
   state: IRoomsState,
   action: IActionWithPayload<IActionsRooms>
-) => {
+): IRoomsState => {
   switch (action.type) {
     case ACTIONS.ADD_ROOM: {
       return {

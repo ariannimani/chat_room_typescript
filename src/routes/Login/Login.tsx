@@ -30,20 +30,24 @@ const Login = () => {
       userDispatch({
         type: ACTIONS.ADD_USER,
         payload: {
-          userName: users
-            .filter(
-              (filterUser) =>
-                filterUser.userName === userName &&
-                filterUser.password === password.value
-            )
-            .map((user) => user.userName),
-          userId: users
-            .filter(
-              (filterUser) =>
-                filterUser.userName === userName &&
-                filterUser.password === password.value
-            )
-            .map((user) => user.userId),
+          userName: String(
+            users
+              .filter(
+                (filterUser) =>
+                  filterUser.userName === userName &&
+                  filterUser.password === password.value
+              )
+              .map((user) => user.userName)
+          ),
+          userId: Number(
+            users
+              .filter(
+                (filterUser) =>
+                  filterUser.userName === userName &&
+                  filterUser.password === password.value
+              )
+              .map((user) => user.userId)
+          ),
         },
       });
       setMessage(null);

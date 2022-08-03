@@ -12,12 +12,6 @@ import roomsReducer, { IActionsRooms } from "./reducers/roomsReducer";
 import userReducer, { IActionsUsers } from "./reducers/userReducer";
 
 export interface IStateContext {
-  //roomsReducer: Object;
-  //userReducer: Object;
-  //messagesReducer: Object;
-  //userInitialState: IUserState;
-  //messagesInitialState: IMessagesState;
-  //roomsIntitialState: IRoomsState;
   roomsState: IRoomsState;
   messagesState: IMessagesState;
   userState: IUserState;
@@ -25,7 +19,8 @@ export interface IStateContext {
   messagesDispatch: React.Dispatch<IActionWithPayload<IActionsMessages>>;
   userDispatch: React.Dispatch<IActionWithPayload<IActionsUsers>>;
 }
-export const StateContext = createContext<IStateContext | null>(null);
+
+export const StateContext = createContext<IStateContext>({} as IStateContext);
 
 interface Props {
   children?: ReactNode;

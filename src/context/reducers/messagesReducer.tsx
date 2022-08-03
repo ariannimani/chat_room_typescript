@@ -6,7 +6,7 @@ export interface IActionsMessages {
   messageId?: number;
   messageChatId?: number;
   messageUserId?: number;
-  messageUserName?: string | string[];
+  messageUserName?: string;
   timestamp?: number;
   userId?: number;
   newUserName?: string;
@@ -16,7 +16,7 @@ export interface IActionsMessages {
 const messageReducer = (
   state: IMessagesState,
   action: IActionWithPayload<IActionsMessages>
-) => {
+): IMessagesState => {
   switch (action.type) {
     case ACTIONS.ADD_MESSAGE: {
       return {

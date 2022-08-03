@@ -87,7 +87,9 @@ const Chat = () => {
         messageUserId: Number(
           userState.users.usersData.map((user) => user.userId)
         ),
-        messageUserName: userState.users.usersData.map((user) => user.userName),
+        messageUserName: String(
+          userState.users.usersData.map((user) => user.userName)
+        ),
         timestamp: current,
       },
     });
