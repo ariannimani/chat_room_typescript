@@ -59,6 +59,20 @@ const Chat = () => {
     "Friday",
     "Saturday",
   ];
+  const Months = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ];
 
   useEffect(() => {
     setSeed(roomId);
@@ -72,29 +86,31 @@ const Chat = () => {
   };
   const sendMessage = (e: { preventDefault: () => void }) => {
     e.preventDefault();
-    const current = Number(new Date()) / 1000;
-    messagesDispatch({
-      type: ACTIONS.ADD_MESSAGE,
-      payload: {
-        message: input,
-        messageId:
-          messagesState.messages.messagesData.length > 0
-            ? messagesState.messages.messagesData[
-                messagesState.messages.messagesData.length - 1
-              ].messageId + 1
-            : 1,
-        messageChatId: Number(roomId),
-        messageUserId: Number(
-          userState.users.usersData.map((user) => user.userId)
-        ),
-        messageUserName: String(
-          userState.users.usersData.map((user) => user.userName)
-        ),
-        timestamp: current,
-      },
-    });
-    setInput("");
-    ScrollToBottom();
+    if (input.length > 0) {
+      const current = Number(new Date()) / 1000;
+      messagesDispatch({
+        type: ACTIONS.ADD_MESSAGE,
+        payload: {
+          message: input,
+          messageId:
+            messagesState.messages.messagesData.length > 0
+              ? messagesState.messages.messagesData[
+                  messagesState.messages.messagesData.length - 1
+                ].messageId + 1
+              : 1,
+          messageChatId: Number(roomId),
+          messageUserId: Number(
+            userState.users.usersData.map((user) => user.userId)
+          ),
+          messageUserName: String(
+            userState.users.usersData.map((user) => user.userName)
+          ),
+          timestamp: current,
+        },
+      });
+      setInput("");
+      ScrollToBottom();
+    }
   };
 
   const Room = () => {
@@ -131,6 +147,9 @@ const Chat = () => {
     const dateDigit = date.getDay();
     const week = weekday[dateDigit];
     const today = new Date();
+    let lastMonday = new Date();
+    lastMonday.setDate(lastMonday.getDate() - (lastMonday.getDay() - 1));
+    lastMonday.setHours(0, 0, 0, 0);
     const dayOfWeekDigit = new Date().getDay();
     const dayToday =
       date.getDate() === today.getDate() &&
@@ -141,12 +160,33 @@ const Chat = () => {
       date.getMonth() === today.getMonth() &&
       date.getFullYear() === today.getFullYear();
 
-    if (dateDigit === dayOfWeekDigit && dayToday) {
-      return "last seen Today at " + Time(false, "");
-    } else if (dateDigit === dayOfWeekDigit - 1 && dayYesterday) {
-      return "last seen Yesterday at" + Time(false, "");
-    } else if (week !== undefined) {
-      return "last seen on " + week + " at " + Time(false, "");
+    const WEEK_LENGTH = 604800000;
+    const messageDate =
+      date.getDate() +
+      " " +
+      Months[date.getMonth()] +
+      " " +
+      date.getFullYear() +
+      " " +
+      date.getHours() +
+      ":" +
+      ((date.getMinutes() < 10 ? "0" : "") + date.getMinutes()) +
+      ":" +
+      ((date.getSeconds() < 10 ? "0" : "") + date.getSeconds());
+
+    const LastWeek =
+      lastMonday.getTime() <= date.getTime() &&
+      date.getTime() < lastMonday.getTime() + WEEK_LENGTH;
+    if (LastWeek) {
+      if (dateDigit === dayOfWeekDigit && dayToday) {
+        return "last seen Today at " + Time(false, "");
+      } else if (dateDigit === dayOfWeekDigit - 1 && dayYesterday) {
+        return "last seen Yesterday at" + Time(false, "");
+      } else if (week !== undefined) {
+        return "last seen on " + week + " at " + Time(false, "");
+      }
+    } else {
+      return "last seen on " + messageDate;
     }
   };
 
