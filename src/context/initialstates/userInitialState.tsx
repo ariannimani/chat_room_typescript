@@ -5,8 +5,8 @@ export interface IUsers {
   usersData: IUsersData[];
 }
 export interface IUsersData {
-  userName: string | undefined;
-  userId: number | undefined;
+  userName: string;
+  userId: number;
 }
 const userIntitialState: IUserState = {
   users: {

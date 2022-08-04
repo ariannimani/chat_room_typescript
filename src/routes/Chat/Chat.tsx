@@ -12,7 +12,7 @@ import {
 import { useNavigate, useParams } from "react-router-dom";
 import { StateContext } from "../../context/StateProvider";
 import { ACTIONS } from "../../context/actions/actions";
-import Picker, { IEmojiData } from "emoji-picker-react";
+import Picker from "emoji-picker-react";
 import { IRoomsData } from "../../context/initialstates/roomsIntitialState";
 import { IMessagesData } from "../../context/initialstates/messagesInitialState";
 
@@ -37,7 +37,7 @@ const Chat = () => {
     roomsState,
     roomsDispatch,
   } = useContext(StateContext);
-  const [anchorEl, setAnchorEl] = useState(false);
+  const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const navigate = useNavigate();
   const [chosenEmoji, setChosenEmoji] = useState<string | null | any>(null);
@@ -155,19 +155,30 @@ const Chat = () => {
   };
 
   const handleClose = () => {
-    setAnchorEl(false);
+    setAnchorEl(null);
   };
 
   const deleteRoom = () => {
     handleClose();
     roomsDispatch({
       type: ACTIONS.DELETE_ROOM,
-      payload: { roomId: Number(roomId) },
+      payload: {
+        roomId: Number(roomId),
+        roomName: "",
+        roomOwner: 0,
+      },
     });
 
     messagesDispatch({
       type: ACTIONS.DELETE_ROOM_MESSAGE,
-      payload: { roomId: Number(roomId) },
+      payload: {
+        messageChatId: Number(roomId),
+        message: "",
+        messageId: 0,
+        messageUserId: 0,
+        messageUserName: "",
+        timestamp: 0,
+      },
     });
     navigate("/");
   };
@@ -176,11 +187,8 @@ const Chat = () => {
     setEmojiOpen(!emojiOpen);
   };
 
-  const onEmojiClick = (
-    event: React.MouseEvent<Element, MouseEvent>,
-    data: IEmojiData
-  ) => {
-    //setChosenEmoji(emojiObject);
+  const onEmojiClick = (event: any, emojiObject: any) => {
+    setChosenEmoji(emojiObject);
     if (chosenEmoji !== null) {
       setInput(input + chosenEmoji.emoji);
     }
@@ -232,7 +240,14 @@ const Chat = () => {
     ) {
       messagesDispatch({
         type: ACTIONS.DELETE_MESSAGE,
-        payload: { messageId: Number(deleteId.id) },
+        payload: {
+          messageId: Number(deleteId.id),
+          message: "",
+          messageUserId: 0,
+          messageUserName: "",
+          timestamp: 0,
+          messageChatId: 0,
+        },
       });
     }
     handleCloseContextMenu();
@@ -276,7 +291,7 @@ const Chat = () => {
           <IconButton>
             <AttachFile />
           </IconButton>
-          <IconButton onClick={() => handleClick}>
+          <IconButton onClick={handleClick}>
             <MoreVert />
           </IconButton>
           <Menu

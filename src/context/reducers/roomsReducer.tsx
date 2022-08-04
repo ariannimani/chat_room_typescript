@@ -2,9 +2,9 @@ import { ACTIONS, IActionWithPayload } from "../actions/actions";
 import { IRoomsState } from "../initialstates/roomsIntitialState";
 
 export interface IActionsRooms {
-  roomName?: string;
-  roomOwner?: number;
-  roomId?: number;
+  roomName: string;
+  roomOwner: number;
+  roomId: number;
 }
 
 const roomsReducer = (

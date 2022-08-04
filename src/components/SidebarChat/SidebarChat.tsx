@@ -1,10 +1,10 @@
-import React, { FunctionComponent, useContext } from "react";
+import React, { FunctionComponent, useContext, useState } from "react";
 import "./SidebarChat.css";
-import { Avatar } from "@mui/material";
+import { Avatar, Modal, Typography } from "@mui/material";
 import { Link } from "react-router-dom";
 import { ACTIONS } from "../../context/actions/actions";
 import { StateContext } from "../../context/StateProvider";
-import { IRoomsData } from "../../context/initialstates/roomsIntitialState";
+import AddNewChatPopUp from "../AddNewChatPopUp/AddNewChatPopUp";
 
 interface ISidebarChat {
   id: number | null;
@@ -17,32 +17,49 @@ const SidebarChat: FunctionComponent<ISidebarChat> = ({
   name,
   addNewChat,
 }) => {
-  const { roomsState, roomsDispatch } = useContext(StateContext);
-
-  const createChat = () => {
-    let addRoomName = prompt("Please eneter name for chat room!");
-
-    while (
-      roomsState.rooms.roomsData.some(
-        // eslint-disable-next-line no-loop-func
-        (room: IRoomsData) => room.roomName === addRoomName
-      )
-    ) {
-      if (addRoomName === "") {
-        addRoomName = prompt("Please enter chat name!");
-      } else {
-        addRoomName = prompt(
-          "This chat Exists. Please use different Chat Name!"
-        );
-      }
-    }
-    roomsDispatch({
-      type: ACTIONS.ADD_ROOM,
-      payload: { roomName: addRoomName, roomOwner: 1 },
-    });
+  const { roomsDispatch } = useContext(StateContext);
+  const [openNewChat, setOpenNewChat] = useState<boolean>(false);
+  const handleOpenModal = () => {
+    setOpenNewChat(true);
+  };
+  const handleCloseModal = () => {
+    setOpenNewChat(false);
   };
 
-  return !addNewChat ? (
+  const createChat = (newChatName: string) => {
+    roomsDispatch({
+      type: ACTIONS.ADD_ROOM,
+      payload: { roomName: newChatName, roomOwner: 1, roomId: 0 },
+    });
+    setOpenNewChat(false);
+  };
+
+  return addNewChat.length === 0 ? (
+    <div className="sidebarChat">
+      <Typography
+        id="modal-modal-title"
+        variant="h6"
+        component="h2"
+        onClick={handleOpenModal}
+        className="sideBarAddNew"
+      >
+        Add new Chat
+      </Typography>
+      <Modal
+        open={openNewChat}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+        onClose={handleCloseModal}
+      >
+        <div className="sidebarNewChat">
+          <AddNewChatPopUp
+            createChat={createChat}
+            handleCloseModal={handleCloseModal}
+          ></AddNewChatPopUp>
+        </div>
+      </Modal>
+    </div>
+  ) : (
     <Link to={`/rooms/${id}`}>
       <div className="sidebarChat">
         <Avatar src={`https://avatars.dicebear.com/api/human/${name}.svg`} />
@@ -52,10 +69,6 @@ const SidebarChat: FunctionComponent<ISidebarChat> = ({
         </div>
       </div>
     </Link>
-  ) : (
-    <div className="sidebarChat" onClick={createChat}>
-      <h2> Add new Chat</h2>
-    </div>
   );
 };
 

@@ -5,9 +5,9 @@ export interface IRooms {
   roomsData: IRoomsData[];
 }
 export interface IRoomsData {
-  roomName: string | undefined;
-  roomOwner: number | undefined;
-  roomId: number | undefined;
+  roomName: string;
+  roomOwner: number;
+  roomId: number;
 }
 const roomsIntitialState: IRoomsState = {
   rooms: {

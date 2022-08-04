@@ -1,4 +1,5 @@
 import {
+  Cancel,
   Chat,
   DonutLarge,
   MoreVert,
@@ -20,15 +21,14 @@ import { useNavigate } from "react-router-dom";
 import { ACTIONS } from "../../context/actions/actions";
 import { useContext } from "react";
 import { IRoomsData } from "../../context/initialstates/roomsIntitialState";
-function Sidebar() {
+
+const Sidebar = () => {
   const [search, setSearch] = useState<string>("");
 
   const { roomsState, userDispatch, userState, messagesDispatch } =
     useContext(StateContext);
-  const [anchorEl, setAnchorEl] = useState(false);
-  const [anchorElUser, setAnchorElUser] = useState<boolean | null | undefined>(
-    null
-  );
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [anchorElUser, setAnchorElUser] = useState(null);
   const [changeUser, setChangeUser] = useState<boolean>(false);
   const [newUserName, setNewUserName] = useState<string>("");
 
@@ -45,31 +45,25 @@ function Sidebar() {
 
     return DataRooms;
   };
-  const handleClick = (event: {
-    currentTarget: boolean | ((prevState: boolean) => boolean);
-  }) => {
+  const handleClick = (event: any) => {
     setAnchorEl(event.currentTarget);
   };
   const handleClose = () => {
-    setAnchorEl(false);
-    setAnchorElUser(false);
+    setAnchorEl(null);
+    setAnchorElUser(null);
   };
 
   const LogOut = () => {
     const user = userState.users.usersData[0];
     userDispatch({
       type: ACTIONS.LOGOUT_USER,
-      payload: { userId: user.userId },
+      payload: { userId: user.userId, userName: user.userName },
     });
     handleClose();
     navigate("/");
   };
 
-  const handleChangeUserClick = (event: {
-    currentTarget:
-      | boolean
-      | ((prevState: boolean | null | undefined) => boolean | null | undefined);
-  }) => {
+  const handleChangeUserClick = (event: any) => {
     setAnchorElUser(event.currentTarget);
   };
   const openChangeUserName = () => {
@@ -92,6 +86,10 @@ function Sidebar() {
       payload: {
         messageUserId: Number(user.userId),
         messageUserName: newUserName,
+        message: "",
+        messageId: 0,
+        messageChatId: 1,
+        timestamp: 0,
       },
     });
     setChangeUser(false);
@@ -107,7 +105,7 @@ function Sidebar() {
               src={`https://avatars.dicebear.com/api/human/${Math.floor(
                 Math.random()
               )}.svg`}
-              onClick={() => handleChangeUserClick}
+              onClick={handleChangeUserClick}
             />
           }
           <Menu
@@ -138,9 +136,22 @@ function Sidebar() {
                 size="small"
                 onChange={(e) => setNewUserName(e.target.value)}
               />
-              <Button size="small" onClick={changeUserName}>
+              <Button
+                size="small"
+                onClick={changeUserName}
+                className="changeBtn"
+              >
                 Submit
               </Button>
+              <IconButton
+                aria-label="cancel"
+                size="small"
+                className="cancelBtn"
+                sx={{ color: "red" }}
+                onClick={() => setChangeUser(false)}
+              >
+                <Cancel fontSize="inherit" />
+              </IconButton>
             </div>
           ) : (
             <h3>{userState.users.usersData[0].userName}</h3>
@@ -153,7 +164,7 @@ function Sidebar() {
           <IconButton>
             <Chat />
           </IconButton>
-          <IconButton onClick={() => handleClick}>
+          <IconButton onClick={handleClick}>
             <MoreVert />
           </IconButton>
           <Menu
@@ -188,11 +199,11 @@ function Sidebar() {
         </div>
       </div>
       <div className="sidebar__chats">
-        <SidebarChat addNewChat={""} id={null} name={""} />
+        <SidebarChat addNewChat={""} id={0} name={"Add New Chat"} />
         {SearchRoom().length > 0
           ? SearchRoom().map((room: IRoomsData) => (
               <SidebarChat
-                addNewChat={""}
+                addNewChat={"ExistingChats"}
                 key={room.roomId}
                 id={room.roomId}
                 name={room.roomName}
@@ -202,6 +213,6 @@ function Sidebar() {
       </div>
     </div>
   );
-}
+};
 
 export default Sidebar;

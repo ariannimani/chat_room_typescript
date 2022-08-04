@@ -2,15 +2,12 @@ import { ACTIONS, IActionWithPayload } from "../actions/actions";
 import { IMessagesState } from "../initialstates/messagesInitialState";
 
 export interface IActionsMessages {
-  message?: string;
-  messageId?: number;
-  messageChatId?: number;
-  messageUserId?: number;
-  messageUserName?: string;
-  timestamp?: number;
-  userId?: number;
-  newUserName?: string;
-  roomId?: number;
+  message: string;
+  messageId: number;
+  messageChatId: number;
+  messageUserId: number;
+  messageUserName: string;
+  timestamp: number;
 }
 
 const messageReducer = (
@@ -45,7 +42,8 @@ const messageReducer = (
           ...state.messages,
           messagesData: [
             ...state.messages.messagesData.filter(
-              (message) => message.messageChatId !== action.payload.roomId
+              (message) =>
+                message.messageChatId !== action.payload.messageChatId
             ),
           ],
         },
@@ -75,10 +73,10 @@ const messageReducer = (
           ...state.messages,
           messagesData: [
             ...state.messages.messagesData.map((obj) => {
-              if (obj.messageUserId === action.payload.userId) {
+              if (obj.messageUserId === action.payload.messageUserId) {
                 return {
                   ...obj,
-                  messageUserName: action.payload.newUserName,
+                  messageUserName: action.payload.messageUserName,
                 };
               }
               return obj;

@@ -2,8 +2,8 @@ import { ACTIONS, IActionWithPayload } from "../actions/actions";
 import { IUserState } from "../initialstates/userInitialState";
 
 export interface IActionsUsers {
-  userName?: string;
-  userId?: number;
+  userName: string;
+  userId: number;
 }
 const userReducer = (
   state: IUserState,
