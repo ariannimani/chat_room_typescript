@@ -51,6 +51,3 @@ const AddNewChatPopUp: FunctionComponent<IAddNewChatPopUp> = ({
 };
 
 export default AddNewChatPopUp;
-function handleCloseModal(): void {
-  throw new Error("Function not implemented.");
-}
