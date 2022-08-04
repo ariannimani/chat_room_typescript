@@ -17,7 +17,7 @@ const SidebarChat: FunctionComponent<ISidebarChat> = ({
   name,
   addNewChat,
 }) => {
-  const { roomsDispatch } = useContext(StateContext);
+  const { messagesState, roomsDispatch } = useContext(StateContext);
   const [openNewChat, setOpenNewChat] = useState<boolean>(false);
   const handleOpenModal = () => {
     setOpenNewChat(true);
@@ -65,7 +65,13 @@ const SidebarChat: FunctionComponent<ISidebarChat> = ({
         <Avatar src={`https://avatars.dicebear.com/api/human/${name}.svg`} />
         <div className="sidebarChat__info">
           <h2>{name}</h2>
-          {/*<p>{message[0]?.message}</p>*/}
+          <p>
+            {
+              messagesState.messages.messagesData
+                .filter((m) => m.messageChatId === id)
+                .slice(-1)[0].message
+            }
+          </p>
         </div>
       </div>
     </Link>
